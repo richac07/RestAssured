@@ -12,17 +12,30 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 
 public class RestClient {
 
-    //1. GET Method
-    public CloseableHttpResponse get(String url) throws IOException{
+    // GET Method without header
+    public CloseableHttpResponse get(String url) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url); //http request
         CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpGet); // hit the Get URL
-        return closeableHttpResponse ;
+        return closeableHttpResponse;
+    }
 
-//
+        // GET Method with header
+
+        public CloseableHttpResponse get(String url, HashMap<String, String> headerMap) throws IOException{
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpGet = new HttpGet(url); //http request
+
+            //add Header in the http Request
+            for(Map.Entry<String, String> entry : headerMap.entrySet()){
+                httpGet.addHeader(entry.getKey(),entry.getValue());
+            }
+            CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpGet); // hit the Get URL
+            return closeableHttpResponse ;
 
     }
 }

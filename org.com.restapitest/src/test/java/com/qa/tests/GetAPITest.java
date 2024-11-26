@@ -37,7 +37,7 @@ public class GetAPITest extends TestBase {
     }
 
 
-    @Test
+    @Test(priority = 1)
     public void getAPITest() throws ClientProtocolException, IOException, ParseException {
         restClient = new RestClient();
         closeableHttpResponse =restClient.get(url);
@@ -64,9 +64,65 @@ public class GetAPITest extends TestBase {
         System.out.println("Value of total --> " +totalValue);
         Assert.assertEquals(Integer.parseInt(totalValue),12);
 
-        
+        //Multiple Attribute from Data of restAPI
+        String lastName =  TestUtil.getValueByJPath(responseJson,"/data[0]/last_name");
+        String firstName =  TestUtil.getValueByJPath(responseJson,"/data[0]/first_name");
+        System.out.println("First Name of first --> " +firstName);
+        System.out.println("Last Name of first --> " +lastName);
+
+
 
             // 3. HEADER
+        Header[] headerArray = closeableHttpResponse.getHeaders();
+        HashMap<String, String> allHeaders = new HashMap<String, String>();
+
+        for(Header header: headerArray){
+            allHeaders.put(header.getName(),header.getValue());
+        }
+        System.out.println("Headers Array --> " + allHeaders);
+    }
+
+@Test(priority = 2)
+    public void getAPITestWithHeader() throws ClientProtocolException, IOException, ParseException {
+        restClient = new RestClient();
+        HashMap<String, String> headerMap = new HashMap<String, String>();
+        headerMap.put("Content-Type","application/json");
+        headerMap.put("username","test");
+        headerMap.put("password","123");
+
+        closeableHttpResponse =restClient.get(url, headerMap);
+
+
+        // 1. STATUS CODE
+        int statusCode = closeableHttpResponse.getCode();
+        System.out.println("Status Code : "+ statusCode);
+        Assert.assertEquals(statusCode,RESPONSE_STATUS_CODE_200 , "Status code is not 200");
+
+        // 2. JSON STRING
+        String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(), StandardCharsets.UTF_8);
+        JSONObject responseJson = new JSONObject(responseString);
+        System.out.println("Response JSON from API -----> " + responseJson);
+
+        //Single Attribute of RestAPI
+        //_per_page
+        String perPageValue = TestUtil.getValueByJPath(responseJson, "/per_page");
+        System.out.println("Value of per_page --> " +perPageValue);
+        Assert.assertEquals(Integer.parseInt(perPageValue),6);
+
+        //_total
+        String totalValue = TestUtil.getValueByJPath(responseJson, "/total");
+        System.out.println("Value of total --> " +totalValue);
+        Assert.assertEquals(Integer.parseInt(totalValue),12);
+
+        //Multiple Attribute from Data of restAPI
+        String lastName =  TestUtil.getValueByJPath(responseJson,"/data[0]/last_name");
+        String firstName =  TestUtil.getValueByJPath(responseJson,"/data[0]/first_name");
+        System.out.println("First Name of first --> " +firstName);
+        System.out.println("Last Name of first --> " +lastName);
+
+
+
+        // 3. HEADER
         Header[] headerArray = closeableHttpResponse.getHeaders();
         HashMap<String, String> allHeaders = new HashMap<String, String>();
 
